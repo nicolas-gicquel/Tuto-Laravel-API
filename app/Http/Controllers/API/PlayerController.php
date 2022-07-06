@@ -26,6 +26,7 @@ class PlayerController extends Controller
         /***** 2ème Méthode *****/
         // On récupère tous les joueurs
         $players = DB::table('players')
+            ->join('clubs', 'clubs.id', '=', 'players.club_id')
             ->get()
             ->toArray();
 
@@ -52,7 +53,26 @@ class PlayerController extends Controller
             'position' => 'required|max:100',
         ]);
 
-        
+        $filename = "";
+        if ($request->hasFile('photoPlayer')) {
+
+            // On récupère le nom du fichier avec son extension, résultat $filenameWithExt : "jeanmiche.jpg"
+            $filenameWithExt = $request->file('photoPlayer')->getClientOriginalName();
+            $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+
+            //  On récupère l'extension du fichier, résultat $extension : ".jpg"
+            $extension = $request->file('photoPlayer')->getClientOriginalExtension();
+
+            // On créer un nouveau fichier avec le nom + une date + l'extension, résultat $fileNameToStore : "jeanmiche_20220422.jpg"
+            $filename = $filenameWithoutExt . '_' . time() . '.' . $extension;
+
+            // On enregistre le fichier à la racine /storage/app/public/uploads, ici la méthode storeAs défini déjà le chemin /storage/app
+            $path = $request->file('photoPlayer')->storeAs('public/uploads', $filename);
+        } else {
+            $filename = Null;
+        }
+
+
 
         // On crée un nouvel utilisateur
         $player = Player::create([
@@ -60,13 +80,15 @@ class PlayerController extends Controller
             'lastName' => $request->lastName,
             'height' => $request->height,
             'position' => $request->position,
+            'club_id' => $request->club_id,
+            'photoPlayer' => $filename,
         ]);
 
         // On retourne les informations du nouvel utilisateur en JSON
         return response()->json([
             'status' => 'Success',
             'data' => $player,
-          ]);
+        ]);
     }
 
     /**
@@ -95,6 +117,7 @@ class PlayerController extends Controller
             'lastName' => 'required|max:100',
             'height' => 'required|max:100',
             'position' => 'required|max:100',
+            'club_id' => $request->club_id,
         ]);
 
         // On crée un nouvel utilisateur
@@ -106,7 +129,9 @@ class PlayerController extends Controller
         ]);
 
         // On retourne les informations du nouvel utilisateur en JSON
-        return response()->json($player, 201);
+        return response()->json([
+            'status' => 'Mise à jour avec succès'
+        ]);
     }
 
     /**
@@ -121,6 +146,8 @@ class PlayerController extends Controller
         $player->delete();
 
         // On retourne la réponse JSON
-        return response()->json();
+        return response()->json([
+            'status' => 'Supprimer avec succès'
+        ]);
     }
 }

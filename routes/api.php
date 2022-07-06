@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\ClubController;
 use App\Http\Controllers\API\PlayerController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -9,3 +10,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource("players", PlayerController::class);
+
+Route::apiResource("clubs", ClubController::class);
