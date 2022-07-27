@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Club extends Model
 {
     use HasFactory;
-    protected $fillable = ['nameClub'];
+    protected $fillable = ['nameClub','logoClub'];
 }
