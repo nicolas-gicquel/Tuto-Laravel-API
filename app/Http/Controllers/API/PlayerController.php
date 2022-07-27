@@ -45,7 +45,7 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+        
         $request->validate([
             'firstName' => 'required|max:100',
             'lastName' => 'required|max:100',

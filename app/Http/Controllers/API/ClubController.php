@@ -109,6 +109,9 @@ class ClubController extends Controller
      */
     public function destroy(Club $club)
     {
+        // On supprime le club
+        $club->delete();
+
         return response()->json([
             'status' => 'Supprimer avec succès']);
     }
