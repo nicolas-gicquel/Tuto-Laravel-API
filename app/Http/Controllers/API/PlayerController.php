@@ -26,7 +26,8 @@ class PlayerController extends Controller
         /***** 2ème Méthode *****/
         // On récupère tous les joueurs
         $players = DB::table('players')
-            ->join('clubs', 'clubs.id', '=', 'players.club_id')
+            ->leftjoin('clubs', 'clubs.id', '=', 'players.club_id')
+            ->select('players.*','nameClub','logoClub')
             ->get()
             ->toArray();
 
@@ -117,8 +118,7 @@ class PlayerController extends Controller
             'firstName' => 'required|max:100',
             'lastName' => 'required|max:100',
             'height' => 'required|max:100',
-            'position' => 'required|max:100',
-            'club_id' => $request->club_id,
+            'position' => 'required|max:100',            
         ]);
 
         $filename = "";
