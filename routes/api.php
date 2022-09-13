@@ -28,7 +28,7 @@ Route::controller(PlayerController::class)->group(function () {
 
 Route::controller(ClubController::class)->group(function () {
     Route::get('clubs', 'index');
-    Route::post('club', 'store')->middleware('auth:api');
+    Route::post('club', 'store');//->middleware('auth:api');
     Route::get('club/{id}', 'show');
     Route::put('club/{id}', 'update')->middleware('auth:api');
     Route::delete('club/{id}', 'destroy')->middleware('auth:api');
