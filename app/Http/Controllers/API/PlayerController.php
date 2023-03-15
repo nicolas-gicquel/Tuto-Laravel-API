@@ -163,7 +163,7 @@ class PlayerController extends Controller
      */
     public function destroy(Player $player)
     {
-        // On supprime l'utilisateur
+        // On supprime le joueur
         $player->delete();
 
         // On retourne la réponse JSON

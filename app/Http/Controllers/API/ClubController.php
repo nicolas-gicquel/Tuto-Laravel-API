@@ -56,7 +56,7 @@ class ClubController extends Controller
         } else {
             $filename = Null;
         }
-        
+
         $club = Club::create([
             'nameClub' => $request->nameClub,
             'logoClub' => $filename,
@@ -65,7 +65,7 @@ class ClubController extends Controller
         return response()->json([
             'status' => 'Success',
             'data' => $club,
-          ]);
+        ]);
     }
 
     /**
@@ -77,7 +77,7 @@ class ClubController extends Controller
     public function show(Club $club)
     {
         $club =  Club::whereId($club->id)->firstOrFail();
-        
+
         return response()->json($club);
     }
 
@@ -90,6 +90,7 @@ class ClubController extends Controller
      */
     public function update(Request $request, Club $club)
     {
+
         $this->validate($request, [
             'nameClub' => 'required|max:100',
         ]);
@@ -113,14 +114,15 @@ class ClubController extends Controller
             $filename = Null;
         }
 
+
         $club->update([
             'nameClub' => $request->nameClub,
             'logoClub' => $filename,
         ]);
-
-         return response()->json([
-            'status' => 'Mise à jour avec succèss']);
-
+        
+        return response()->json([
+            'status' => 'Mise à jour avec succèss'
+        ]);
     }
 
     /**
@@ -134,7 +136,9 @@ class ClubController extends Controller
         // On supprime le club
         $club->delete();
 
+        // On retourne la réponse JSON
         return response()->json([
-            'status' => 'Supprimer avec succès']);
+            'status' => 'Club supprimé avec succès'
+        ]);
     }
 }
