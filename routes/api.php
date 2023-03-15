@@ -22,9 +22,9 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(PlayerController::class)->group(function () {
     Route::get('players', 'index');
     Route::post('player', 'store')->middleware('auth:api');
-    Route::get('player/{id}', 'show');
-    Route::patch('player/{id}', 'update')->middleware('auth:api');
-    Route::delete('player/{id}', 'destroy')->middleware('auth:api');
+    Route::get('player/{player}', 'show');
+    Route::patch('player/{player}', 'update')->middleware('auth:api');
+    Route::delete('player/{player}', 'destroy')->middleware('auth:api');
 }); 
 
 Route::controller(ClubController::class)->group(function () {
