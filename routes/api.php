@@ -15,15 +15,17 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register')->name('register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
+    Route::get('current-user', 'currentUser');
 
 });
+
 
 
 Route::controller(PlayerController::class)->group(function () {
     Route::get('players', 'index');
     Route::post('player', 'store')->middleware('auth:api');
     Route::get('player/{player}', 'show');
-    Route::patch('player/{player}', 'update')->middleware('auth:api');
+    Route::post('player/{player}', 'update');
     Route::delete('player/{player}', 'destroy')->middleware('auth:api');
 }); 
 

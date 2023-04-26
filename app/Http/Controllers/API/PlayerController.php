@@ -27,7 +27,7 @@ class PlayerController extends Controller
         // On récupère tous les joueurs
         $players = DB::table('players')
             ->leftjoin('clubs', 'clubs.id', '=', 'players.club_id')
-            ->select('players.*','nameClub','logoClub')
+            ->select('players.*', 'nameClub', 'logoClub')
             ->get()
             ->toArray();
 
@@ -46,7 +46,7 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'firstName' => 'required|max:100',
             'lastName' => 'required|max:100',
@@ -114,12 +114,12 @@ class PlayerController extends Controller
      */
     public function update(Request $request, Player $player)
     {
-        $this->validate($request, [
-            'firstName' => 'required|max:100',
-            'lastName' => 'required|max:100',
-            'height' => 'required|max:100',
-            'position' => 'required|max:100',            
-        ]);
+        // $this->validate($request, [
+        //     'firstName' => 'required|max:100',
+        //     'lastName' => 'required|max:100',
+        //     'height' => 'required|max:100',
+        //     'position' => 'required|max:100',            
+        // ]);
 
         $filename = "";
         if ($request->hasFile('photoPlayer')) {
