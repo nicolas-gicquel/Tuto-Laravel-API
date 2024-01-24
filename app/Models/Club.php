@@ -9,4 +9,9 @@ class Club extends Model
 {
     use HasFactory;
     protected $fillable = ['nameClub','logoClub'];
+
+    public function players()
+    {
+        return $this->hasMany(Player::class);
+    }
 }

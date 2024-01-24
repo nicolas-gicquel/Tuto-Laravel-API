@@ -2,51 +2,28 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Player;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 
 class PlayerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        /***** 1ère Méthode *****/
-        // On récupère tous les joueurs
-        // $players = Player::all();
-
+        // On récupère tous les utilisateurs
+        $players = Player::with(['club'])->get();
         // On retourne les informations des utilisateurs en JSON
-        // return response()->json($players);
-
-        /***** 2ème Méthode *****/
-        // On récupère tous les joueurs
-        $players = DB::table('players')
-            ->leftjoin('clubs', 'clubs.id', '=', 'players.club_id')
-            ->select('players.*', 'nameClub', 'logoClub')
-            ->get()
-            ->toArray();
-
-        // On retourne les informations des utilisateurs en JSON
-        return response()->json([
-            'status' => 'Success',
-            'data' => $players,
-        ]);
+        return response()->json($players);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'firstName' => 'required|max:100',
             'lastName' => 'required|max:100',
@@ -56,35 +33,18 @@ class PlayerController extends Controller
 
         $filename = "";
         if ($request->hasFile('photoPlayer')) {
-
-            // On récupère le nom du fichier avec son extension, résultat $filenameWithExt : "jeanmiche.jpg"
             $filenameWithExt = $request->file('photoPlayer')->getClientOriginalName();
             $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-
-            //  On récupère l'extension du fichier, résultat $extension : ".jpg"
             $extension = $request->file('photoPlayer')->getClientOriginalExtension();
-
-            // On créer un nouveau fichier avec le nom + une date + l'extension, résultat $fileNameToStore : "jeanmiche_20220422.jpg"
             $filename = $filenameWithoutExt . '_' . time() . '.' . $extension;
-
-            // On enregistre le fichier à la racine /storage/app/public/uploads, ici la méthode storeAs défini déjà le chemin /storage/app
             $path = $request->file('photoPlayer')->storeAs('public/uploads', $filename);
         } else {
             $filename = Null;
         }
 
-
-
         // On crée un nouvel utilisateur
-        $player = Player::create([
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'height' => $request->height,
-            'position' => $request->position,
-            'club_id' => $request->club_id,
-            'photoPlayer' => $filename,
-        ]);
-
+        // $player = Player::create($request->all());
+        $player = Player::create(array_merge($request->all(), ['photoPlayer' => $filename]));
         // On retourne les informations du nouvel utilisateur en JSON
         return response()->json([
             'status' => 'Success',
@@ -94,81 +54,41 @@ class PlayerController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Playerr  $playerr
-     * @return \Illuminate\Http\Response
      */
     public function show(Player $player)
     {
-        $player =  Player::whereId($player->id)->firstOrFail();
-        // On retourne les informations de l'utilisateur en JSON
         return response()->json($player);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Playerr  $playerr
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Player $player)
     {
-        // $this->validate($request, [
-        //     'firstName' => 'required|max:100',
-        //     'lastName' => 'required|max:100',
-        //     'height' => 'required|max:100',
-        //     'position' => 'required|max:100',            
-        // ]);
-
-        $filename = "";
-        if ($request->hasFile('photoPlayer')) {
-
-            // On récupère le nom du fichier avec son extension, résultat $filenameWithExt : "jeanmiche.jpg"
-            $filenameWithExt = $request->file('photoPlayer')->getClientOriginalName();
-            $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-
-            //  On récupère l'extension du fichier, résultat $extension : ".jpg"
-            $extension = $request->file('photoPlayer')->getClientOriginalExtension();
-
-            // On créer un nouveau fichier avec le nom + une date + l'extension, résultat $fileNameToStore : "jeanmiche_20220422.jpg"
-            $filename = $filenameWithoutExt . '_' . time() . '.' . $extension;
-
-            // On enregistre le fichier à la racine /storage/app/public/uploads, ici la méthode storeAs défini déjà le chemin /storage/app
-            $path = $request->file('photoPlayer')->storeAs('public/uploads', $filename);
-        } else {
-            $filename = Null;
-        }
-
-        // On crée un nouvel utilisateur
-        $player->update([
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'height' => $request->height,
-            'position' => $request->position,
-            'photoPlayer' => $filename,
+        $this->validate($request, [
+            'firstName' => 'required|max:100',
+            'lastName' => 'required|max:100',
+            'height' => 'required|max:100',
+            'position' => 'required|max:100',
         ]);
-
-        // On retourne les informations du nouvel utilisateur en JSON
+        // On crée un nouvel utilisateur
+        $player->update($request->all());
+        //retourne les informations du nouvel utilisateur en JSON
         return response()->json([
-            'status' => 'Mise à jour avec succès'
+            'status' => 'Mise à jour avec succèss'
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Playerr  $playerr
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Player $player)
     {
-        // On supprime le joueur
+        // On supprime l'utilisateur
         $player->delete();
-
         // On retourne la réponse JSON
         return response()->json([
-            'status' => 'Supprimer avec succès'
+            'status' => 'Supprimer avec succès avec succèss'
         ]);
     }
 }

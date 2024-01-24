@@ -9,4 +9,9 @@ class Player extends Model
 {
     use HasFactory;
     protected $fillable = ['firstName', 'lastName', 'height', 'position','club_id','photoPlayer'];
+
+    public function club()
+    {
+        return $this->belongsTo(Club::class);
+    }
 }
